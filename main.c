@@ -42,7 +42,7 @@ GNU General Public License for more details.
 #ifdef __FreeBSD__
 #include <net/if.h>
 #include <net/if_dl.h>
-#ifdef __OpenBSD__
+#elif defined(__OpenBSD__)
 #include <net/if.h>
 #include <net/if_dl.h>
 #else
@@ -325,8 +325,9 @@ int main(int argc,char **argv) {
             exit(1);
         }
         {
-            u_char yes = 1;
-            u_char no = 0;
+            int yes = 1;
+            int no = 0;
+
             if (setsockopt(iface->raw_socket, SOL_SOCKET, SO_BROADCAST, &yes, sizeof(yes))<0) {
                 perror("setsockopt SO_BROADCAST");
                 exit(1);
@@ -340,14 +341,17 @@ int main(int argc,char **argv) {
                 exit(1);
             }
             #if defined(__FreeBSD__) || defined(__OpenBSD__)
-                if((setsockopt(iface->raw_socket, IPPROTO_IP, IP_MULTICAST_LOOP, &no, sizeof(no))) < 0) {
+
+                u_char u_yes = 1;
+                u_char u_no = 0;
+                if((setsockopt(iface->raw_socket, IPPROTO_IP, IP_MULTICAST_LOOP, &u_no, sizeof(u_no))) < 0) {
                     perror("setsockopt IP_MULTICAST_LOOP");
                 }
                 if((setsockopt(iface->raw_socket, IPPROTO_IP, IP_MULTICAST_IF, &iface->ifaddr, sizeof(iface->ifaddr))) < 0) {
                     perror("setsockopt IP_MULTICAST_IF");
                 }
                 int setttl = ttl;
-                if((setsockopt(iface->raw_socket, IPPROTO_IP, IP_MULTICAST_TTL, &setttl, sizeof(setttl))) < 0) {
+                if((setsockopt(iface->raw_socket, IPPROTO_IP, IP_MULTICAST_TTL, &ttl, sizeof(ttl))) < 0) {
                     perror("setsockopt IP_MULTICAST_TTL");
                 }
             #else
@@ -377,7 +381,7 @@ int main(int argc,char **argv) {
               perror("socket");
               exit(1);
           }
-        u_char yes = 1;
+        int yes = 1;
         if(setsockopt(rcv, SOL_SOCKET, SO_BROADCAST, &yes, sizeof(yes))<0){
             perror("SO_BROADCAST on rcv");
             exit(1);
