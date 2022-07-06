@@ -609,7 +609,6 @@ int main(int argc,char **argv) {
             sendAddr.sin_family = AF_INET;
             sendAddr.sin_port = htons(toPort);
             sendAddr.sin_addr = toAddress;
-            DPRINT("IFACE POiNTER %d, ");
             if (sendto(
                 iface->raw_socket,
                 &gram,
