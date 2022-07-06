@@ -598,7 +598,7 @@ int main(int argc,char **argv) {
             memcpy(gram+16, &toAddress.s_addr, 4);
             *(u_short*)(gram+20)=htons(fromPort);
             *(u_short*)(gram+22)=htons(toPort);
-            #if (defined __FreeBSD__ && __FreeBSD__ <= 10) || defined __APPLE__ || defined __OpenBSD__
+            #if (defined __FreeBSD__ && __FreeBSD__ <= 10) || defined __APPLE__
             *(u_short*)(gram+24)=htons(UDPHEADER_LEN + len);
             *(u_short*)(gram+2)=HEADER_LEN + len;
             #else
@@ -609,7 +609,7 @@ int main(int argc,char **argv) {
             sendAddr.sin_family = AF_INET;
             sendAddr.sin_port = htons(toPort);
             sendAddr.sin_addr = toAddress;
-
+            DPRINT("IFACE POiNTER %d, ");
             if (sendto(
                 iface->raw_socket,
                 &gram,
